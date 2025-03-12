@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>My Saved Careers</h2>
+<ul>
+        {% for career in saved_careers %}
+        <li><strong>{{ career.career_choice }}</strong> - Based on skills: {{ career.skills_used }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/">Go Back</a>
+{% endblock %}

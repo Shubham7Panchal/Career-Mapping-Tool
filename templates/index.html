@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container">
+        <h1>Find Your Ideal Tech Career</h1>
+        <p>Enter your skills and discover the best career paths for you.</p>
+        
+        <input type="text" id="skills" placeholder="Enter skills (e.g., Python, SQL)">
+        <button onclick="getRecommendations()">Find Careers</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function getRecommendations() {
+            let skills = document.getElementById("skills").value;
+            fetch('/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ skills: skills })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "<h3>Recommended Careers:</h3>";
+                data.recommendations.forEach(item => {
+                    resultsDiv.innerHTML += `
+                        <p><strong>${item[0]}</strong> - ${item[1]} (Match: ${Math.round(item[2] * 100)}%) 
+                        <button onclick="saveCareer('${item[0]}', '${skills}')">Save</button></p>
+                    `;
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        function saveCareer(career, skills) {
+            fetch('/save-career', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ career: career, skills: skills })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+    
+    
+{% endblock %}
